@@ -1,10 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Fawada's Lodge</title>
-    </head>
-    <body>
-        {% block body %}
-        {% endblock %}
-    </body>
+        <head>
+            <title>Fawada's Lodge</title>
+            {% load static %}
+            <link rel="stylesheet" type="text/css" href="{% static 'lodge/site.css' %}" />
+        </head>
+
+        <body>
+            
+            <img src="{% static "lodge/media/Fawada_logo.jpg" %}" alt="home" width="200" />
+           
+        
+            <div class="navbar">
+                <a href="{% url 'index' %}" class="navbar-brand">Home</a>
+                <a href="{% url 'check' %}" class="navbar-item">Check in/Check out</a>
+                <a href="{% url 'booking' %}" class="navbar-item">Bookings</a>
+                <a href="{% url 'room' %}" class="navbar-item">Room Management</a>
+                
+                
+            </div>
+
+            {% block body %}
+            {% endblock %}
+
+        </body>
+
+        <footer>
+            <p>© Project Group D Productions 2022</p>
+        </footer>
 </html>
