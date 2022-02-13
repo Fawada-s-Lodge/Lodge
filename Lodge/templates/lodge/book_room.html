@@ -1,0 +1,68 @@
+{% extends "lodge/layout.html" %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <h2>{{ message|escape|safe }}</h2>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if datecheck %}
+        <p>Room for availability for check in date <b> {{ indate }} </b>and check out date <b>{{ outdate }}</b></p>
+        <form action="{% url 'room_booked' %}" method="post">
+            {% csrf_token %}
+            <table class="availability-table">
+                <thead>
+                    <tr>
+                        <th>Room Number</th>
+                        <th>Sleeps</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Select</th>
+                    </tr>
+                </thead>
+
+                {% for rooms in available_rooms_list %}
+                <tr>
+                    <td>{{rooms.1}}</td>
+                    <td>{{rooms.2}}</td>
+                    <td>£{{rooms.3}}</td>
+                    <td>{{rooms.4}}</td>
+                    <td><input type="checkbox" value={{rooms.0}} name="selected_rooms"></td>
+                </tr>
+                {% empty %}
+
+                {% endfor %}
+            </table>
+            
+            <p>First Name: <input type="text" name="first_name"> Last Name: <input type="text" name="last_name"></p> 
+            <p>Email Address: <input type="text" name="email"></p>
+
+            <input type="submit" value="Book Room(s)">  
+        </form>
+    {% else %}
+        <form action="{% url 'check_availability' %}" method="post">
+            {% csrf_token %}
+            <label for="checkin">Please select booking dates:</label>
+            <p>Check In Date: <input type="text" id="datepicker" name="indate"></p>
+            <p>Check Out Date: <input type="text" id="datepicker2" name="outdate"></p>
+            <input type="submit" value="Check Availability">  
+        </form>
+    {% endif %}
+
+
+    <script>
+        $( function() {
+            $( "#datepicker" ).datepicker({ dateFormat: "yy-mm-dd", minDate: 0, maxDate: "+1y +300d" });
+        } );
+    </script>
+    <script>
+        $( function() {
+            $( "#datepicker2" ).datepicker({ dateFormat: "yy-mm-dd", minDate: 1, maxDate: "+1y +300d" });
+        } );
+    </script>
+
+{% endblock %}
+

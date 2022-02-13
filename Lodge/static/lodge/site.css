@@ -3,6 +3,18 @@
     color: blue;
 }
 
+table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
+    table-layout: auto;
+    width: 500px;
+}
+
+td {
+    text-align: center;
+}
+
+
 .navbar {
     background-color: lightslategray;
     font-size: 1em;
@@ -50,13 +62,14 @@ ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-  }
+}
 
-  a {
-      color: #ff0000;
-      text-decoration: none;
-    }
+a {
+    color: #ff0000;
+    text-decoration: none;
+}
 
-  a:hover {
-      text-decoration: underline;
-  }
+a:hover {
+    text-decoration: underline;
+}
+

@@ -1,0 +1,30 @@
+{% extends "lodge/layout.html" %}
+
+{% block body %}
+  
+    <!--<h1>Check in list - {% now "l jS F Y" %}  </h1>-->
+        <br />
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <h1>{{ message|escape|safe }}</h1>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'checked_out' %}" method="post">
+        {% csrf_token %}
+        <label for="checkout">Customer(s) to check out:</label>
+        <select name="cust">
+        {% for checkin in bookings %} 
+            <option value={{checkout.0}}>{{checkout.1}} {{checkout.2}} - Room Number: {{checkout.3}}</option>          
+        {% empty %}
+            <option value={{checkout.0}}>No guests to check out</option>     
+        {% endfor %}
+        </select>
+        <input type="submit" value="Check Out">  
+    </form>
+
+{% endblock %}
+

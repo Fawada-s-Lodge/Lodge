@@ -39,8 +39,6 @@ class Bookings(models.Model):
     first_date = models.DateTimeField()
     last_date = models.DateTimeField()
     booked_date = models.DateTimeField()
-    adults = models.IntegerField()
-    children = models.IntegerField()
     cancellation_date = models.DateTimeField(blank = True, null = True)
 
     def booked(self):

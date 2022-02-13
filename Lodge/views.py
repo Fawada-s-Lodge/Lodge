@@ -1,3 +1,4 @@
+from select import select
 from tabnanny import check
 from django import forms
 from django.http import HttpResponseBadRequest, HttpResponseRedirect, Http404, HttpResponse
@@ -29,7 +30,7 @@ def checkin(request):
         cursor.execute(query)
         customers_to_checkin = cursor.fetchall()
 
-        query = "SELECT br.id, c.first_name, c.last_name, r.room_number FROM lodge_customers c JOIN lodge_bookings b ON c.id = b.customer_id_id JOIN lodge_booking_rooms br ON b.id = br.booking_id_id JOIN lodge_rooms r ON r.id = br.room_id_id LEFT JOIN lodge_checkin ch ON ch.booking_room_id_id = br.id LEFT JOIN lodge_checkout cho ON ch.booking_room_id_id = br.id WHERE ch.checkin_date IS NOT NULL AND b.last_date <="+now
+        query = "SELECT br.id, c.first_name, c.last_name, r.room_number FROM lodge_customers c JOIN lodge_bookings b ON c.id = b.customer_id_id JOIN lodge_booking_rooms br ON b.id = br.booking_id_id JOIN lodge_rooms r ON r.id = br.room_id_id LEFT JOIN lodge_checkin ch ON ch.booking_room_id_id = br.id LEFT JOIN lodge_checkout cho ON cho.booking_room_id_id = br.id WHERE ch.checkin_date IS NOT NULL AND cho.checkout_date IS NULL AND b.last_date >="+now
         cursor.execute(query)
         customers_to_checkout = cursor.fetchall()
 
@@ -47,11 +48,12 @@ def checked_in(request):
 
         #write to the database
         with connection.cursor() as cursor:
-            query = "INSERT INTO lodge_checkin (booking_room_id_id, checkin_date) VALUES ("+booking_check_id+", curdate())"
-            cursor.execute(query)
+            query = "INSERT INTO lodge_checkin (booking_room_id_id, checkin_date) VALUES (%s, curdate())"
+            val = [booking_check_id]
+            cursor.execute(query, val)
 
-            query = "SELECT c.first_name, c.last_name, r.room_number FROM lodge_customers c JOIN lodge_bookings b ON c.id = b.customer_id_id JOIN lodge_booking_rooms br ON b.id = br.booking_id_id JOIN lodge_rooms r ON r.id = br.room_id_id LEFT JOIN lodge_checkin ch ON ch.booking_room_id_id = br.id WHERE ch.booking_room_id_id ="+booking_check_id
-            cursor.execute(query)
+            query = "SELECT c.first_name, c.last_name, r.room_number FROM lodge_customers c JOIN lodge_bookings b ON c.id = b.customer_id_id JOIN lodge_booking_rooms br ON b.id = br.booking_id_id JOIN lodge_rooms r ON r.id = br.room_id_id LEFT JOIN lodge_checkin ch ON ch.booking_room_id_id = br.id WHERE ch.booking_room_id_id = %s"
+            cursor.execute(query, val)
             checked_in = cursor.fetchall()
 
             checkedin_list = list(checked_in)
@@ -66,7 +68,7 @@ def checked_out(request):
 
         #write to the database
         with connection.cursor() as cursor:
-            query = "INSERT INTO lodge_checkout (booking_room_id_id, checkin_date) VALUES ("+booking_check_id+", curdate())"
+            query = "INSERT INTO lodge_checkout (booking_room_id_id, checkout_date) VALUES ("+booking_check_id+", curdate())"
             cursor.execute(query)
 
             query = "SELECT c.first_name, c.last_name, r.room_number FROM lodge_customers c JOIN lodge_bookings b ON c.id = b.customer_id_id JOIN lodge_booking_rooms br ON b.id = br.booking_id_id JOIN lodge_rooms r ON r.id = br.room_id_id LEFT JOIN lodge_checkout ch ON ch.booking_room_id_id = br.id WHERE ch.booking_room_id_id ="+booking_check_id
@@ -77,6 +79,72 @@ def checked_out(request):
             
             messages.success(request, (str(checkedout_list[0][0])+" "+str(checkedout_list[0][1])+" is checked out of room number "+str(checkedout_list[0][2])))
             return redirect("checkin")
+
+def book_room(request):
+    return render(request, "lodge/book_room.html")
+
+def check_availability(request):
+    if request.method == "POST":
+        indate = request.POST["indate"]
+        outdate = request.POST["outdate"]
+
+        request.session['indate'] = indate
+        request.session['outdate'] = outdate
+
+
+        #check database
+        with connection.cursor() as cursor:
+            query = "SELECT r.id, r.room_number, r.sleeps, r.room_price, lrt.room_type_desc FROM lodge_rooms r JOIN lodge_room_type lrt ON r.room_type_id = lrt.id WHERE NOT EXISTS (SELECT lr.id FROM lodge_rooms lr LEFT JOIN lodge_booking_rooms lbr ON lr.id = lbr.room_id_id LEFT JOIN lodge_bookings lb ON lbr.booking_id_id = lb.id WHERE (lb.last_date >= %s AND lb.first_date <= %s) AND lr.id = r.id)"
+            val = [outdate, indate] 
+            cursor.execute(query, val)
+            available_rooms = cursor.fetchall()
+
+            available_rooms_list = list(available_rooms)
+            
+            return render(request, "lodge/book_room.html",{
+                "available_rooms_list": available_rooms_list,
+                "datecheck":True,
+                "indate": indate,
+                "outdate": outdate
+            })
+
+def room_booked(request):
+    if request.method == "POST":
+        selected_rooms_list = request.POST.getlist("selected_rooms")
+        first_name = str(request.POST["first_name"])
+        last_name = str(request.POST["last_name"])
+        email = str(request.POST["email"])
+
+        with connection.cursor() as cursor:
+            query = "INSERT INTO lodge_customers (first_name, last_name, email) VALUES (%s, %s, %s)"
+            val=[first_name, last_name, email]
+            cursor.execute(query, val)
+
+            #find out which ID has been assigned to customer
+            query = "SELECT max(ID) FROM lodge_customers"
+            cursor.execute(query)
+            customer_id_dict = cursor.fetchone()
+            customer_id = customer_id_dict[0]
+
+            #write to the booking table
+            query = "INSERT INTO lodge_bookings (first_date, last_date, booked_date, customer_id_id) VALUES (%s, %s, curdate(), %s)"
+            val = [request.session['indate'], request.session['outdate'], customer_id]
+            cursor.execute(query, val)
+
+            #get the ID for in bookings so we can write to the rooms table to say rooms are taken
+            query = "SELECT max(ID) FROM lodge_bookings"
+            cursor.execute(query)
+            booking_id_dict = cursor.fetchone()
+            booking_id = booking_id_dict[0]
+
+            #loop through list of selected rooms
+            for room in selected_rooms_list:
+                query = "INSERT INTO lodge_booking_rooms (booking_id_id, room_id_id) VALUES (%s, %s)"
+                val = [booking_id, room]
+                cursor.execute(query, val)
+
+        messages.success(request, (first_name + " "+ last_name + " is booked to stay in room(s) "+str(selected_rooms_list)+". Due to arrive on the "+request.session['indate']+" and due to leave on the " +request.session['outdate']))
+        return redirect("book_room")
 
 def home(request):
     return render(request, "lodge/home.html")
