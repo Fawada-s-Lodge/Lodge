@@ -73,3 +73,38 @@ a:hover {
     text-decoration: underline;
 }
 
+.loginbody {
+    background: url("https://lochside-hotel.com/wp-content/uploads/sites/2/2019/05/Lodges-Edits-0008-1600x1068.jpg");
+}
+
+.loginlink {
+    font-size: 1.5em;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+.loginheading {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    padding-top: 10%;
+}
+
+.loginform {
+    margin: auto;
+    width: 25%;
+    border: 5px solid rgb(37, 50, 63);
+    padding: 10px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+
+}
+ .centertable {
+    margin-left: auto;
+    margin-right: auto;
+ }
+ .insideloginform {
+     font-size: 1.2em;
+ } 
+
+
+

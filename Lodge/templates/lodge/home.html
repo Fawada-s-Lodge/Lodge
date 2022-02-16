@@ -1,12 +1,37 @@
+   
 <!-- templates/home.html-->
-{% extends 'base.html' %}
+{% extends "lodge/layout.html" %}
+
 {% block title %}Home{% endblock %}
+
+{% block body %}
+
+
+{% load static %}
+<div style="border: 1px solid black;">
+    
+
+</div>
+
 {% block content %}
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
-  <p><a href="{% url 'logout' %}">Log Out</a></p>
-{% else %}
-  <p>You are not logged in</p>
-  <a href="{% url 'login' %}">Log In</a>
+  <p class="welcome">Hello {{ user.username }}!</p>
+  <p class="loginlink"><a href="{% url 'logout' %}">Log Out</a></p>
+
+
+  {% else %}
+  <p class="welcome">You are not logged in.</p>
+  <p class="welcome">Please login before continuing.</p>
+  <p class="loginlink"><a href="{% url 'login' %}">Log In</a></p>
 {% endif %}
+<br>
+<br>
+
+{% endblock %}
+<div class="background-lodge">
+
+</div>
+
+    
+     
 {% endblock %}

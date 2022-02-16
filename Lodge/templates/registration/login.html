@@ -1,7 +1,41 @@
-<!-- templates/registration/login.html -->
-<h2>Log In</h2>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'lodge/site.css' %}" />
+
+<!-- templates/registration/login.html 
+
+  <h2>Log In</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <button type="submit">Log In</button>
-</form>
+
+  </form>
+-->
+
+  <!--Trying out a new type of login form-->
+  <body class="loginbody">
+  <h2 class="loginheading">Please login using your username and password.</h2>
+  
+  <div class="loginform">
+  <form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <table class="centertable">
+      <tr>
+        <td class="insideloginform">{{ form.username.label_tag }}</td>
+        <td>{{ form.username }}</td>
+      </tr>
+      <tr>
+        <td class="insideloginform">{{ form.password.label_tag }}</td>
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+    <br>
+    <input class="loginbutton" type="submit" value="Login" />
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+
+    {# Assumes you setup the password_reset view in your URLconf #}
+  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+</div>
+
+</body>

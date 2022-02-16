@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.db import connection
 from django.contrib import messages
 from django.utils.translation import get_language
+from django.contrib.auth.decorators import login_required  #new for autho
+
 
 
 from .models import Booking_rooms, Bookings, Checkin, Rooms
@@ -14,11 +16,7 @@ import datetime
 
 # Create your views here.
 def index(request):
-    return render(request, "lodge/index.html", {
-        "rooms": Rooms.objects.all(),
-        "bookings": Bookings.objects.all()
-    })
-
+    return redirect("book_room")
 
 def checkin(request):
 
@@ -154,3 +152,10 @@ def about(request):
 
 def contact(request):
     return render(request, "lodge/contact.html")
+
+@login_required     #new for autho
+def check(request): 
+    return redirect("book_room")
+
+def dashboard(request):
+    return render(request, "lodge/dashboard.html")

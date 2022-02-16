@@ -7,14 +7,16 @@
             <link rel="stylesheet" type="text/css" href="{% static 'lodge/site.css' %}" />
 
             <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
-            <!--<link rel="stylesheet" href="/resources/demos/style.css">-->
             <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
             <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
         </head>
 
         <body>
+            <header class="header">
+                <span>0113 8574637</span>   <span>info@fawadaslodge.co.uk</span>
+            </header>
             
-            <img src="{% static "lodge/media/Fawada_logo.jpg" %}" alt="home" width="200" />
+            <img src="{% static "lodge/media/Fawada_logo.jpg" %}" alt="Fawada's Lodge Logo" width="200" class="center"/>
            
         
             <div class="navbar">
@@ -22,6 +24,13 @@
                 <a href="{% url 'about' %}" class="navbar-item">About</a>
                 <a href="{% url 'contact' %}" class="navbar-item">Contact</a>
                 <a href="{% url 'signin' %}" class="navbar-item">Sign in</a>
+
+                {% if user.is_authenticated %}
+  
+                    <span style="float:right"><a href="{% url 'logout' %}">Log Out</a></span>
+                {% else %}
+                    <span style="float:right"><a href="{% url 'login' %}">Log In</a></span>
+                {% endif %}
                 
             </div>
 
