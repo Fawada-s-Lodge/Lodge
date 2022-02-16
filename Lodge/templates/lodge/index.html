@@ -5,9 +5,14 @@
 
 {% load static %}
 <div style="border: 1px solid black;">
-    
+{% if user.is_authenticated %}
+
 <img src="{% static "lodge/media/cat.jpg" %}" alt="jpg"  width="300"  class="center"/>
 </div>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Log In</a>
+{% endif %}
 
 
     

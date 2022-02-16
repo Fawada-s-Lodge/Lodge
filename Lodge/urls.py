@@ -13,8 +13,8 @@ urlpatterns = [
     path("home/", views.index, name="home"),
     path("check/", views.check, name="check"),
     path("booking/", views.booking, name="booking"),
-    path("room/", views.room, name="room")
-    #path("dashboard/", views.contact, name="dashboard")
+    path("room/", views.room, name="room"),
+    path("dashboard/", views.dashboard, name="dashboard")
 ]
     
 

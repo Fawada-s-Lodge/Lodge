@@ -84,3 +84,6 @@ def booking(request):
 
 def room(request):
     return render(request, "lodge/room.html")
+
+def dashboard(request):
+    return render(request, "lodge/dashboard.html")
