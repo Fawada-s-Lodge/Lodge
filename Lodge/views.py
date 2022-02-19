@@ -16,7 +16,8 @@ import datetime
 
 # Create your views here.
 def index(request):
-    return redirect("book_room")
+    #return redirect("book_room")
+    return render(request, "lodge/home.html")
 
 def checkin(request):
 
