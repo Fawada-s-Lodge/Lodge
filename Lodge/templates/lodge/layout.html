@@ -2,6 +2,9 @@
 <html lang="en">
     <head>
         <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            
             <title>Fawada's Lodge</title>
             {% load static %}
             <link rel="stylesheet" type="text/css" href="{% static 'lodge/site.css' %}" />
@@ -13,7 +16,7 @@
 
         <body>
             <header class="header">
-                <span>0113 8574637</span>   <span>info@fawadaslodge.co.uk</span>
+                <span>0191 8574637</span>   <span>info@fawadaslodge.co.uk</span>
             </header>
             
             <img src="{% static "lodge/media/Fawada_logo.jpg" %}" alt="Fawada's Lodge Logo" width="200" class="center"/>
@@ -21,11 +24,11 @@
         
             <div class="navbar">
                 <a href="{% url 'home' %}" class="navbar-brand">Home</a>
-                <a href="{% url 'about' %}" class="navbar-item">About</a>
-                <a href="{% url 'contact' %}" class="navbar-item">Contact</a>
-                <a href="{% url 'signin' %}" class="navbar-item">Sign in</a>
                 <a href="{% url 'book_room' %}" class="navbar-item">Bookings</a>
+                <a href="{% url 'checkin' %}" class="navbar-item">Checking In/Out</a>
                 <a href="{% url 'dashboard' %}" class="navbar-item">Dashboard</a>
+                <a href="{% url 'dashboard2' %}" class="navbar-item">Dashboard 2</a>
+
 
                 {% if user.is_authenticated %}
   

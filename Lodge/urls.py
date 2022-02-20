@@ -13,6 +13,6 @@ urlpatterns = [
     path("home/", views.home, name="home"),
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
-    path("signin/", views.contact, name="signin"),
-    path("dashboard/", views.dashboard, name="dashboard")
+    path("dashboard/", views.dashboard, name="dashboard"),
+    path("dashboard2/", views.dashboard2, name="dashboard2")
 ]
