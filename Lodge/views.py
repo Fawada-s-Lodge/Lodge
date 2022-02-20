@@ -166,7 +166,7 @@ def check(request):
 def dashboard(request):
     return render(request, "lodge/dashboard.html")
 
-#from https://plotly.com/python/v3/graph-data-from-mysql-database-in-python/ 
+#ref https://plotly.com/python/v3/graph-data-from-mysql-database-in-python/ 
 conn = MySQLdb.connect(host="localhost", user="root", passwd="server123", db="lodge5")
 cursor = conn.cursor()
 cursor.execute('select room_number, room_price from lodge_rooms');
@@ -174,14 +174,14 @@ cursor.execute('select room_number, room_price from lodge_rooms');
 rows = cursor.fetchall()
 str(rows)[0:300]
 
+#creating data structure
 df = pd.DataFrame( [[ij for ij in i] for i in rows] )
 df.rename(columns={0: 'Room', 1: 'Price'}, inplace=True);
 df = df.sort_values(['Room'], ascending=[1]);
 
-#fig = px.bar(df, x='Room', y='Price')
 
-#from https://www.codingwithricky.com/2019/08/28/easy-django-plotly/
-#from https://albertrtk.github.io/2021/01/24/Graph-on-a-web-page-with-Plotly-and-Django.html
+#ref https://www.codingwithricky.com/2019/08/28/easy-django-plotly/
+#ref https://albertrtk.github.io/2021/01/24/Graph-on-a-web-page-with-Plotly-and-Django.html
 def dashboard2(request):
 #Generating data for plots
     x_data = [0,1,2,3]
@@ -199,19 +199,8 @@ def dashboard2(request):
         'title_font_size': 25
     }
 
-    plot_div = plot([Scatter(x=x_data, y=y_data,
-                        mode='lines', name='test',
-                        opacity=0.8, marker_color='green')],
-               output_type='div')
-
-    plot_div2 = plot([Scatter(x=x1_data, y=y1_data,
-                        mode='lines', name='test',
-                        opacity=0.8, marker_color='blue')],
-               output_type='div')
-
-
-    plot_div3 = plot({'data':graph, 'layout':layout}, output_type='div')
+    plot_div = plot({'data':graph, 'layout':layout}, output_type='div')
                
 
 
-    return render(request, "lodge/dashboard2.html", context={'plot_div3': plot_div3})
+    return render(request, "lodge/dashboard2.html", context={'plot_div': plot_div})
